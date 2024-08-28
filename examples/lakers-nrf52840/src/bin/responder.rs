@@ -5,15 +5,16 @@ use common::{Packet, PacketError, ADV_ADDRESS, ADV_CRC_INIT, CRC_POLY, FREQ, MAX
 use defmt::info;
 use defmt::unwrap;
 use embassy_executor::Spawner;
+// use embassy_nrf::gpio::{Level, Output, OutputDrive};
 use embassy_nrf::radio::ble::Mode;
 use embassy_nrf::radio::ble::Radio;
 use embassy_nrf::radio::TxPower;
 use embassy_nrf::{bind_interrupts, peripherals, radio};
+// use embassy_time::{Duration, Timer};
 use {defmt_rtt as _, panic_probe as _};
 use nrf52840_hal::pac;
 use nrf52840_hal::prelude::*;
-//use nrf52840_hal::gpio::{Level, Output, OutputDrive, Pin};
-use embassy_time::{Duration, Timer};
+use nrf52840_hal::gpio::{Level, Output, Pin};
 
 use lakers::*;
 
@@ -40,21 +41,31 @@ bind_interrupts!(struct Irqs {
 async fn main(spawner: Spawner) {
     let peripherals = pac::Peripherals::take().unwrap();
     let p0 = nrf52840_hal::gpio::p0::Parts::new(peripherals.P0);
-    let mut led_pin_p0_26 = p0.p0_26.into_push_pull_output(nrf52840_hal::gpio::Level::Low); // Using nrf52840_hal for GPIO
-    let mut led_pin_p0_14 = p0.p0_14.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
-    let mut led_pin_p0_16 = p0.p0_16.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
-    let mut led_pin_p0_11 = p0.p0_11.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
-    let mut led_pin_p0_24 = p0.p0_24.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
-    let mut led_pin_p0_15 = p0.p0_15.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
-    let mut led_pin_p0_25 = p0.p0_25.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
-    let mut led_pin_p0_19 = p0.p0_19.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
+    let p1 = nrf52840_hal::gpio::p1::Parts::new(peripherals.P1);
+
+    let mut led_pin_p0_26 = p0.p0_26.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
+    let mut led_pin_p0_8 = p0.p0_08.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
+    let mut led_pin_p0_7 = p0.p0_07.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
+    let mut led_pin_p0_6 = p0.p0_06.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
+    let mut led_pin_p0_5 = p0.p0_05.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
+
+    let mut led_pin_p1_07 = p1.p1_07.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
+    let mut led_pin_p1_08 = p1.p1_08.into_push_pull_output(nrf52840_hal::gpio::Level::Low);
 
     let mut config = embassy_nrf::config::Config::default();
     config.hfclk_source = embassy_nrf::config::HfclkSource::ExternalXtal;
-    let peripherals: embassy_nrf::Peripherals = embassy_nrf::init(config);
+    let embassy_peripherals: embassy_nrf::Peripherals = embassy_nrf::init(config);
+
+    // let mut led_pin_p0_26 = Output::new(embassy_peripherals.P0_26, Level::Low, OutputDrive::Standard);
+    // let mut led_pin_p0_10 = Output::new(embassy_peripherals.P0_10, Level::Low, OutputDrive::Standard);
+    // let mut led_pin_p0_9 = Output::new(embassy_peripherals.P0_09, Level::Low, OutputDrive::Standard);
+    // let mut led_pin_p0_8 = Output::new(embassy_peripherals.P0_08, Level::Low, OutputDrive::Standard);
+    // let mut led_pin_p0_7 = Output::new(embassy_peripherals.P0_07, Level::Low, OutputDrive::Standard);
+    // let mut led_pin_p0_6 = Output::new(embassy_peripherals.P0_06, Level::Low, OutputDrive::Standard);
+    // let mut led_pin_p0_5 = Output::new(embassy_peripherals.P0_05, Level::Low, OutputDrive::Standard);
 
     info!("Starting BLE radio");
-    let mut radio = Radio::new(peripherals.RADIO, Irqs);
+    let mut radio = Radio::new(embassy_peripherals.RADIO, Irqs);
 
     radio.set_mode(Mode::BLE_1MBIT);
     radio.set_tx_power(TxPower::_0D_BM);
@@ -77,24 +88,43 @@ async fn main(spawner: Spawner) {
         let buffer: [u8; MAX_PDU] = [0x00u8; MAX_PDU];
         let mut c_r: Option<ConnId> = None;
 
-        info!("Receiving...");
-        led_pin_p0_26.set_high().unwrap();
-        //led_pin_p0_25.set_high().unwrap();
-        let pckt = common::receive_and_filter(&mut radio, Some(0xf5), Some(&mut led_pin_p0_25)) // filter all incoming packets waiting for CBOR TRUE (0xf5)
-            .await
-            .unwrap();
+        // info!("Receiving..."); 
+        // filter all incoming packets waiting for CBOR TRUE (0xf5)
+        let pckt = common::receive_and_filter(
+            &mut radio, 
+            Some(0xf5), 
+            Some(&mut led_pin_p1_07)
+            ).await.unwrap();
         info!("Received message_1");
-        //led_pin_p0_25.set_low().unwrap(); 
+        led_pin_p0_26.set_high();
 
+        // PSK
+        let cred_i: Credential = Credential::parse_ccs_symmetric(common::CRED_PSK.try_into().unwrap()).unwrap();
         let cred_r: Credential = Credential::parse_ccs_symmetric(common::CRED_PSK.try_into().unwrap()).unwrap();
-        let responder = EdhocResponder::new(lakers_crypto::default_crypto(), EDHOCMethod::PSK2, None, cred_r);
+        let responder = EdhocResponder::new(
+            lakers_crypto::default_crypto(), 
+            EDHOCMethod::PSK2, 
+            None, 
+            cred_r
+        );
 
+        // STATSTAT
+        // let cred_i = Credential::parse_ccs(common::CRED_I.try_into().unwrap()).unwrap();
+        // let cred_r = Credential::parse_ccs(common::CRED_R.try_into().unwrap()).unwrap();
+        // let responder = EdhocResponder::new(
+        //     lakers_crypto::default_crypto(), 
+        //     EDHOCMethod::StatStat, 
+        //     Some(common::R.try_into().unwrap()), 
+        //     cred_r
+        // );
+
+        led_pin_p0_26.set_high();
         let message_1: EdhocMessageBuffer = pckt.pdu[1..pckt.len].try_into().expect("wrong length"); // get rid of the TRUE byte
 
-        led_pin_p0_14.set_high().unwrap();
+        led_pin_p0_6.set_high();
         let result = responder.process_message_1(&message_1);
-        led_pin_p0_14.set_low().unwrap();   
-        led_pin_p0_26.set_low().unwrap();
+        led_pin_p0_6.set_low();   
+        led_pin_p0_26.set_low();
         
         if let Ok((responder, _c_i, ead_1)) = result {
             c_r = Some(generate_connection_identifier_cbor(
@@ -102,31 +132,28 @@ async fn main(spawner: Spawner) {
             ));
             let ead_2 = None;
             info!("Prepare message_2");
-            led_pin_p0_26.set_high().unwrap();
-            led_pin_p0_16.set_high().unwrap();
+            led_pin_p0_26.set_high();
+            led_pin_p0_5.set_high();
             let (responder, message_2) = responder
                 .prepare_message_2(CredentialTransfer::ByReference, c_r, &ead_2)
                 .unwrap();
-            led_pin_p0_16.set_low().unwrap();
+            led_pin_p0_5.set_low();
             
             // prepend 0xf5 also to message_2 in order to allow the Initiator filter out from other BLE packets
-            
-            //led_pin_p0_15.set_high().unwrap();
-            info!("Send message_2 and wait message_3");
+            // info!("Send message_2 and wait message_3");
+            led_pin_p0_26.set_low();
             let message_3 = common::transmit_and_wait_response(
                 &mut radio,
                 Packet::new_from_slice(message_2.as_slice(), Some(0xf5)).expect("wrong length"),
                 Some(c_r.unwrap().as_slice()[0]),
-                &mut led_pin_p0_15,
+                &mut led_pin_p1_08,
             )
             .await;
-            led_pin_p0_26.set_low().unwrap();
-            //led_pin_p0_15.set_low().unwrap();
             
             match message_3 {
                 Ok(message_3) => {
                     info!("Received message_3");
-                    led_pin_p0_26.set_high().unwrap();
+                    led_pin_p0_26.set_high();
 
                     let rcvd_c_r: ConnId = ConnId::from_int_raw(message_3.pdu[0] as u8);
 
@@ -134,7 +161,7 @@ async fn main(spawner: Spawner) {
                         let message_3: EdhocMessageBuffer = message_3.pdu[1..message_3.len]
                             .try_into()
                             .expect("wrong length");
-                        led_pin_p0_11.set_high().unwrap();
+                        led_pin_p0_8.set_high();
                         let Ok((responder, id_cred_i, _ead_3)) =
                             responder.parse_message_3(&message_3)
                         else {
@@ -143,20 +170,18 @@ async fn main(spawner: Spawner) {
                             // anyway legally
                             continue;
                         };
-                        led_pin_p0_11.set_low().unwrap();
+                        led_pin_p0_8.set_low();
 
-                        let cred_i: Credential = 
-                            Credential::parse_ccs_symmetric(common::CRED_PSK.try_into().unwrap()).unwrap();
                         let valid_cred_i =
                             credential_check_or_fetch(Some(cred_i), id_cred_i.unwrap()).unwrap();
-                        led_pin_p0_24.set_high().unwrap();
+                        led_pin_p0_7.set_high();
                         let Ok((responder, prk_out)) = responder.verify_message_3(valid_cred_i)
                         else {
                             info!("EDHOC error at verify_message_3");
                             continue;
                         };
-                        led_pin_p0_24.set_low().unwrap();
-                        led_pin_p0_26.set_low().unwrap();
+                        led_pin_p0_7.set_low();
+                        led_pin_p0_26.set_low();
                         info!("Handshake completed. prk_out: {:X}", prk_out);
 
                         unwrap!(spawner.spawn(example_application_task(prk_out)));

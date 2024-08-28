@@ -1,6 +1,7 @@
 use crate::credential_check_or_fetch;
 use lakers_shared::{Crypto as CryptoTrait, *};
 use core::clone::Clone;
+use defmt_or_log::trace;
 
 pub fn edhoc_exporter(
     state: &Completed,
@@ -121,15 +122,13 @@ pub fn r_prepare_message_2(
 ) -> Result<(WaitM3, BufferMessage2), EDHOCError> {
     // compute TH_2
     let th_2 = compute_th_2(crypto, &state.g_y, &state.h_message_1);
-
     // compute prk_3e2m
     let prk_2e = compute_prk_2e(crypto, &state.y, &state.g_x, &th_2);
-    //println!("prk_2e:{:?}", prk_2e);
     let salt_3e2m = compute_salt_3e2m(crypto, &prk_2e, &th_2);
 
     let prk_3e2m = match cred_r.key {
         CredentialKey::EC2Compact(public_key) => {
-            compute_prk_3e2m(crypto, &salt_3e2m, r.unwrap(), &public_key)
+            compute_prk_3e2m(crypto, &salt_3e2m, r.unwrap(), &state.g_x)
         }
         CredentialKey::Symmetric(psk) => {
             if state.method == EDHOCMethod::PSK1.into() {
@@ -141,13 +140,13 @@ pub fn r_prepare_message_2(
             }
         }
     };
-    //println!("prk_3e2m:{:?}", prk_3e2m);
+    //trace!("prk_3e2m:{:?}", prk_3e2m);
 
     let id_cred_r = match cred_transfer {
         CredentialTransfer::ByValue => cred_r.by_value()?,
         CredentialTransfer::ByReference => cred_r.by_kid()?,
     };
-    //println!("id_cred_r:{:?}", id_cred_r);
+    //trace!("id_cred_r:{:?}", id_cred_r);
     // MAC_2 is not needed in PSK2
     let mac_2 = match state.method {
         m if m == EDHOCMethod::StatStat.into() => Some(compute_mac_2(
@@ -171,7 +170,7 @@ pub fn r_prepare_message_2(
         m if m == EDHOCMethod::PSK2.into() => None,
         _ => Err(EDHOCError::UnsupportedMethod)?,
     };
-    //println!("mac_2:{:?}", mac_2);
+    //trace!("mac_2:{:?}", mac_2);
     // // compute MAC_2
     // let mac_2 = compute_mac_2(
     //     crypto,
@@ -456,9 +455,10 @@ pub fn i_parse_message_2<'a>(
     //println!("message_2 parsed by I: {:?}", res);
     if let Ok((g_y, ciphertext_2)) = res {
         let th_2 = compute_th_2(crypto, &g_y, &state.h_message_1);
-
+        //trace!("th_2:{:?}", th_2);
         // compute prk_2e
         let prk_2e = compute_prk_2e(crypto, &state.x, &g_y, &th_2);
+        //trace!("prk_2e :{:?}", prk_2e);
 
         let plaintext_2 = encrypt_decrypt_ciphertext_2(crypto, &prk_2e, &th_2, &ciphertext_2);
         //println!("plaintext_2:{:?}", plaintext_2);
@@ -517,12 +517,13 @@ pub fn i_verify_message_2(
             if state.method == EDHOCMethod::PSK1.into() {
                 compute_prk_3e2m_psk(crypto, &salt_3e2m, &psk)
             } else if state.method == EDHOCMethod::PSK2.into() {
-                compute_prk_2e(crypto, &state.x, &state.g_y, &state.th_2)
+                state.prk_2e
             } else {
                 Err(EDHOCError::UnsupportedMethod)?
             }
         }
     };
+    //trace!("prk_3e2m:{:?}",prk_3e2m);
     // let prk_3e2m = match valid_cred_r.key {
     //     CredentialKey::EC2Compact(public_key) => {
     //         compute_prk_3e2m(crypto, &salt_3e2m, &state.x, &public_key)
@@ -551,6 +552,8 @@ pub fn i_verify_message_2(
         m if m == EDHOCMethod::PSK2.into() => None,
         _ => Err(EDHOCError::UnsupportedMethod)?,
     };
+    //trace!("mac_2 inititator :{:?}", expected_mac_2);
+    //trace!("mac_2 from state :{:?}", state.mac_2);
     // let expected_mac_2 = compute_mac_2(
     //     crypto,
     //     &prk_3e2m,

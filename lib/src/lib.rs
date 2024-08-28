@@ -358,6 +358,7 @@ impl<'a, Crypto: CryptoTrait> EdhocInitiatorProcessingM2<Crypto> {
         if self.i.is_some() || self.cred_i.is_some() {
             return Err(EDHOCError::IdentityAlreadySet);
         }
+        trace!("identity in setidentiyt: {:?}", i);
         self.i = i;
         self.cred_i = Some(cred_i);
         Ok(())
@@ -371,6 +372,7 @@ impl<'a, Crypto: CryptoTrait> EdhocInitiatorProcessingM2<Crypto> {
         if self.state.method == EDHOCMethod::StatStat.into() && self.i == None {
             return Err(EDHOCError::MissingIdentity);
         }
+        
         // let Some(i) = self.i else {
         //     return Err(EDHOCError::MissingIdentity);
         // };

@@ -1,8 +1,6 @@
 use embassy_nrf::radio::ble::Radio;
 use embassy_time::TimeoutError;
 use hexlit::hex;
-// use nrf52840_hal::pac;
-// use nrf52840_hal::prelude::*;
 use embedded_hal::digital::v2::OutputPin;
 use nrf52840_hal::gpio::Output;
 
@@ -12,6 +10,10 @@ pub const ADV_ADDRESS: u32 = 0x12345678;
 pub const ADV_CRC_INIT: u32 = 0xffff;
 pub const CRC_POLY: u32 = 0x00065b;
 
+pub const CRED_I: &[u8] = &hex!("A2027734322D35302D33312D46462D45462D33372D33322D333908A101A5010202412B2001215820AC75E9ECE3E50BFC8ED60399889522405C47BF16DF96660A41298CB4307F7EB62258206E5DE611388A4B8A8211334AC7D37ECB52A387D257E6DB3C2A93DF21FF3AFFC8");
+pub const I: &[u8] = &hex!("fb13adeb6518cee5f88417660841142e830a81fe334380a953406a1305e8706b");
+pub const R: &[u8] = &hex!("72cc4761dbd4c78f758931aa589d348d1ef874a7e303ede2f140dcf3e6aa4aac");
+pub const CRED_R: &[u8] = &hex!("A2026008A101A5010202410A2001215820BBC34960526EA4D32E940CAD2A234148DDC21791A12AFBCBAC93622046DD44F02258204519E257236B2A0CE2023F0931F1F386CA7AFDA64FCDE0108C224C51EABF6072");
 
 pub const ID_CRED: &[u8] = &hex!("a1044120");
 pub const CRED_PSK: &[u8] =
@@ -121,6 +123,29 @@ impl From<embassy_nrf::radio::Error> for PacketError {
         }
     }
 }
+// pub async fn receive_and_filter(
+//     radio: &mut Radio<'static, embassy_nrf::peripherals::RADIO>,
+//     header: Option<u8>,
+// ) -> Result<Packet, PacketError>{
+//     let mut buffer: [u8; MAX_PDU] = [0x00u8; MAX_PDU];
+//     loop {
+//         radio.receive(&mut buffer).await?;
+//         if let Ok(pckt) = <&[u8] as TryInto<Packet>>::try_into(&(buffer[..])) {
+//             if let Some(header) = header {
+//                 if pckt.pdu[0] == header {
+//                     return Ok(pckt);
+//                 } else {
+//                     continue;
+//                 }
+//             } else {
+//                 // header is None
+//                 return Ok(pckt);
+//             }
+//         } else {
+//             continue;
+//         }
+//     }
+// }
 
 pub async fn receive_and_filter<P>(
     radio: &mut Radio<'static, embassy_nrf::peripherals::RADIO>,
@@ -154,6 +179,21 @@ pub async fn receive_and_filter<P>(
             continue;
         }
     }
+// }
+
+// pub async fn transmit_and_wait_response(
+//     radio: &mut Radio<'static, embassy_nrf::peripherals::RADIO>,
+//     mut packet: Packet,
+//     filter: Option<u8>
+// ) -> Result<Packet, PacketError> {
+//     let rcvd_packet: Packet = Default::default();
+//     let buffer: [u8; MAX_PDU] = [0x00u8; MAX_PDU];
+
+//     radio.transmit(packet.as_bytes()).await?;
+
+//     let resp = receive_and_filter(radio, filter).await?;
+
+//     Ok(resp)
 }
 
 pub async fn transmit_and_wait_response<P>(
@@ -163,7 +203,7 @@ pub async fn transmit_and_wait_response<P>(
     led_pin: &mut P
 ) -> Result<Packet, PacketError> 
     where 
-        P: OutputPin, <P as nrf52840_hal::prelude::OutputPin>::Error: core::fmt::Debug
+        P: OutputPin, <P  as nrf52840_hal::prelude::OutputPin>::Error: core::fmt::Debug
 {
     let rcvd_packet: Packet = Default::default();
     let buffer: [u8; MAX_PDU] = [0x00u8; MAX_PDU];
@@ -176,6 +216,13 @@ pub async fn transmit_and_wait_response<P>(
 
     Ok(resp)
 }
+// pub async fn transmit_without_response(
+//     radio: &mut Radio<'static, embassy_nrf::peripherals::RADIO>,
+//     mut packet: Packet,
+// ) -> Result<(), PacketError> {
+//     radio.transmit(packet.as_bytes()).await?;
+//     Ok(())
+// }
 
 pub async fn transmit_without_response<P>(
     radio: &mut Radio<'static, embassy_nrf::peripherals::RADIO>,
@@ -183,7 +230,7 @@ pub async fn transmit_without_response<P>(
     led_pin: &mut P
 ) -> Result<(), PacketError> 
     where 
-        P: OutputPin, <P as nrf52840_hal::prelude::OutputPin>::Error: core::fmt::Debug
+        P: OutputPin, <P  as nrf52840_hal::prelude::OutputPin>::Error: core::fmt::Debug
 {
     led_pin.set_high().unwrap();
     radio.transmit(packet.as_bytes()).await?;
