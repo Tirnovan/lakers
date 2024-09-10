@@ -134,7 +134,7 @@ pub fn r_prepare_message_2(
             if state.method == EDHOCMethod::PSK1.into() {
                 compute_prk_3e2m_psk(crypto, &salt_3e2m, &psk)
             } else if state.method == EDHOCMethod::PSK2.into() {
-                compute_prk_2e(crypto, &state.y, &state.g_x, &th_2)
+                prk_2e
             } else {
                 Err(EDHOCError::UnsupportedMethod)?
             }
