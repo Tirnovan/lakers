@@ -73,12 +73,18 @@ async fn main(spawner: Spawner) {
 
     info!("init_handshake");
 
-    // Memory buffer for mbedtls
-    #[cfg(feature = "crypto-psa")]
-    let mut buffer: [c_char; 4096 * 2] = [0; 4096 * 2];
-    #[cfg(feature = "crypto-psa")]
-    unsafe {
-        mbedtls_memory_buffer_alloc_init(buffer.as_mut_ptr(), buffer.len());
+    // // Memory buffer for mbedtls
+    // #[cfg(feature = "crypto-psa")]
+    // let mut buffer: [c_char; 4096 * 2] = [0; 4096 * 2];
+    // #[cfg(feature = "crypto-psa")]
+    // unsafe {
+    //     mbedtls_memory_buffer_alloc_init(buffer.as_mut_ptr(), buffer.len());
+    // }
+    #[cfg(feature = "crypto-cell")]
+    {
+        unsafe {
+            nrf_cc310_bl_init(); // Initialize CryptoCell
+        }
     }
     info!("Prepare message_1");
     led_pin_p0_26.set_high();

@@ -76,12 +76,19 @@ async fn main(spawner: Spawner) {
     radio.set_crc_init(ADV_CRC_INIT);
     radio.set_crc_poly(CRC_POLY);
 
-    // Memory buffer for mbedtls
-    #[cfg(feature = "crypto-psa")]
-    let mut buffer: [c_char; 4096 * 2] = [0; 4096 * 2];
-    #[cfg(feature = "crypto-psa")]
-    unsafe {
-        mbedtls_memory_buffer_alloc_init(buffer.as_mut_ptr(), buffer.len());
+    // // Memory buffer for mbedtls
+    // #[cfg(feature = "crypto-psa")]
+    // let mut buffer: [c_char; 4096 * 2] = [0; 4096 * 2];
+    // #[cfg(feature = "crypto-psa")]
+    // unsafe {
+    //     mbedtls_memory_buffer_alloc_init(buffer.as_mut_ptr(), buffer.len());
+    // }
+    // Initialize CryptoCell instead of mbedTLS
+    #[cfg(feature = "crypto-cell")]
+    {
+        unsafe {
+            nrf_cc310_bl_init(); // Initialize CryptoCell
+        }
     }
 
     loop {
@@ -95,8 +102,8 @@ async fn main(spawner: Spawner) {
             Some(0xf5), 
             Some(&mut led_pin_p1_07)
             ).await.unwrap();
-        info!("Received message_1");
-        led_pin_p0_26.set_high();
+        // info!("Received message_1");
+        // led_pin_p0_26.set_high();
 
         // PSK
         let cred_i: Credential = Credential::parse_ccs_symmetric(common::CRED_PSK.try_into().unwrap()).unwrap();
@@ -119,6 +126,7 @@ async fn main(spawner: Spawner) {
         // );
 
         led_pin_p0_26.set_high();
+        info!("Received message_1");
         let message_1: EdhocMessageBuffer = pckt.pdu[1..pckt.len].try_into().expect("wrong length"); // get rid of the TRUE byte
 
         led_pin_p0_6.set_high();
