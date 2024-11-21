@@ -1,0 +1,221 @@
+{
+    "_ZN16embassy_executor3raw20TaskStorage$LT$F$GT$4poll17h1b8804f54c753128E.llvm.18038227864857647659": 
+    {"size": 5034,
+    "address": "0x0000000000000214",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.0.rcgu.o:"},
+
+    "_ZN6lakers5edhoc19i_prepare_message_317h12dfd0fb572adc46E": 
+    {"size": 1496,
+    "address": "0x000000000000247e",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.3.rcgu.o:"},
+
+    "_ZN6lakers5edhoc17i_parse_message_217h2cfb1257696416bdE": 
+    {"size": 1138,
+    "address": "0x0000000000001a74",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.3.rcgu.o:"},
+
+    "_ZN6lakers5edhoc18i_verify_message_217hab5ee03ecc81b4f8E": 
+    {"size": 1092,
+    "address": "0x0000000000001ee6",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.3.rcgu.o:"},
+
+    "_ZN13lakers_shared12edhoc_parser18decode_plaintext_217h34e47a6a6f3c0790E": 
+    {"size": 718,
+    "address": "0x000000000001f26a",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN6lakers5edhoc16encode_message_117h7cbd24ed74599e97E": 
+    {"size": 628,
+    "address": "0x000000000001e406",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers-2237534adf4e4763.rlib(lakers-2237534adf4e4763.lakers.a80733e73e3508cb-cgu.0.rcgu.o):"},
+
+    "_ZN6lakers5edhoc18encode_kdf_context17hb7db22fd941f1591E": 
+    {"size": 544,
+    "address": "0x000000000001e8b4",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers-2237534adf4e4763.rlib(lakers-2237534adf4e4763.lakers.a80733e73e3508cb-cgu.0.rcgu.o):"},
+
+    "_ZN6lakers5edhoc17encrypt_message_317h06dfea8903a8d3fcE": 
+    {"size": 434,
+    "address": "0x00000000000018c2",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.3.rcgu.o:"},
+
+    "_ZN6lakers5edhoc18encode_plaintext_317h19b4f993a3dd7e4fE": 
+    {"size": 396,
+    "address": "0x000000000001e67a",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers-2237534adf4e4763.rlib(lakers-2237534adf4e4763.lakers.a80733e73e3508cb-cgu.0.rcgu.o):"},
+
+    "_ZN6lakers5edhoc19i_prepare_message_117hc66e406383936264E": 
+    {"size": 340,
+    "address": "0x000000000000232a",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.3.rcgu.o:"},
+
+    "_ZN13lakers_shared4cred6IdCred18from_encoded_value17hd5f80c50653e3e37E": 
+    {"size": 306,
+    "address": "0x000000000001ec4a",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN5defmt6export3fmt17h9a8b2b1c0065aa4eE": 
+    {"size": 290,
+    "address": "0x000000000000171c",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.1.rcgu.o:"},
+
+    "_ZN13lakers_shared12cbor_decoder11CBORDecoder14any_as_encoded17h6aedd1925e806c29E": 
+    {"size": 274,
+    "address": "0x000000000001f720",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.1.rcgu.o):"},
+
+    "_ZN13lakers_shared4cred10Credential19parse_ccs_symmetric17h583465c7130bc35fE": 
+    {"size": 272,
+    "address": "0x000000000001ef6a",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN13lakers_shared4cred6IdCred7get_ccs17h6a7f77f39c5ab7d7E": 
+    {"size": 254,
+    "address": "0x000000000001ee6c",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN6lakers25credential_check_or_fetch17h26054aba6a939f66E": 
+    {"size": 242,
+    "address": "0x000000000001ead4",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers-2237534adf4e4763.rlib(lakers-2237534adf4e4763.lakers.a80733e73e3508cb-cgu.0.rcgu.o):"},
+
+    "_ZN16embassy_executor4arch6thread8Executor3run17h23efb9a75d669f64E": 
+    {"size": 226,
+    "address": "0x000000000000161e",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.1.rcgu.o:"},
+
+    "_ZN11embassy_nrf5radio3ble14Radio$LT$T$GT$8transmit28_$u7b$$u7b$closure$u7d$$u7d$17h9d586a49d55d9f2bE": 
+    {"size": 216,
+    "address": "0x000000000000013c",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.0.rcgu.o:"},
+
+    "_ZN13lakers_shared12edhoc_parser15parse_message_217h2d167284da0cf797E": 
+    {"size": 200,
+    "address": "0x000000000001f1a2",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN13lakers_shared7helpers11encode_info17h90e57a831741220cE": 
+    {"size": 200,
+    "address": "0x000000000001f658",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.1.rcgu.o):"},
+
+    "_ZN13lakers_shared4cred10Credential8by_value17h655ede11f4e0022aE": 
+    {"size": 166,
+    "address": "0x000000000001f07a",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN13lakers_shared4cred6IdCred15from_full_value17h8024f5a12782a5d0E": 
+    {"size": 132,
+    "address": "0x000000000001ebc6",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN13lakers_shared4cred10Credential6by_kid17hff4abe6b975ab3f4E": 
+    {"size": 130,
+    "address": "0x000000000001f120",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN6lakers5edhoc20encode_ciphertext_3a17h315f6b7e008013e0E": 
+    {"size": 118,
+    "address": "0x000000000001e806",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers-2237534adf4e4763.rlib(lakers-2237534adf4e4763.lakers.a80733e73e3508cb-cgu.0.rcgu.o):"},
+
+    "_ZN13lakers_shared4cred6IdCred14reference_only17h46a36543bd96fad8E": 
+    {"size": 108,
+    "address": "0x000000000001ee00",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN13lakers_shared4cred6IdCred16as_encoded_value17hb083263967bb19dcE": 
+    {"size": 102,
+    "address": "0x000000000001ed9a",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN13lakers_shared110_$LT$impl$u20$core..convert..TryInto$LT$lakers_shared..EdhocMessageBuffer$GT$$u20$for$u20$$RF$$u5b$u8$u5d$$GT$8try_into17h03141538fd771bd0E": 
+    {"size": 78,
+    "address": "0x000000000001f60a",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.1.rcgu.o):"},
+
+    "_ZN13lakers_shared18EdhocMessageBuffer17extend_from_slice17h5cfc4e410f016e40E": 
+    {"size": 66,
+    "address": "0x000000000001f5c8",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.1.rcgu.o):"},
+
+    "_ZN6lakers5edhoc20encode_enc_structure17hf727e7e7a79a4dc9E": 
+    {"size": 56,
+    "address": "0x000000000001e87c",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers-2237534adf4e4763.rlib(lakers-2237534adf4e4763.lakers.a80733e73e3508cb-cgu.0.rcgu.o):"},
+
+    "_ZN13lakers_shared6crypto16prepare_suites_i17h962cb4d54aa617f1E": 
+    {"size": 50,
+    "address": "0x000000000001f560",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.1.rcgu.o):"},
+
+    "strstr": 
+    {"size": 44,
+    "address": "0x0000000000001860",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.1.rcgu.o:"},
+
+    "_ZN70_$LT$lakers_shared..MessageBufferError$u20$as$u20$core..fmt..Debug$GT$3fmt17heaa28ea6c6a232a4E": 
+    {"size": 40,
+    "address": "0x000000000001f538",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN62_$LT$lakers_shared..EDHOCError$u20$as$u20$core..fmt..Debug$GT$3fmt17habfa764e136e5490E": 
+    {"size": 34,
+    "address": "0x000000000001e3e4",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers-2237534adf4e4763.rlib(lakers-2237534adf4e4763.lakers.a80733e73e3508cb-cgu.0.rcgu.o):"},
+
+    "_ZN67_$LT$initiator..common..PacketError$u20$as$u20$core..fmt..Debug$GT$3fmt17ha8a0484b88b04889E": 
+    {"size": 34,
+    "address": "0x00000000000015f0",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.0.rcgu.o:"},
+
+    "_ZN62_$LT$lakers_shared..EDHOCError$u20$as$u20$core..fmt..Debug$GT$3fmt17habfa764e136e5490E.llvm.17735975041657564035": 
+    {"size": 34,
+    "address": "0x000000000000183e",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.1.rcgu.o:"},
+
+    "_ZN13lakers_shared4cred6IdCred13as_full_value17hf6fd11ee5fe21e79E": 
+    {"size": 30,
+    "address": "0x000000000001ed7c",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.0.rcgu.o):"},
+
+    "_ZN13lakers_shared18EdhocMessageBuffer8as_slice17hcdd8be15d402ba67E": 
+    {"size": 30,
+    "address": "0x000000000001f592",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.1.rcgu.o):"},
+
+    "_ZN5defmt6export3fmt17h64ecd703f8f99151E": 
+    {"size": 28,
+    "address": "0x0000000000001700",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.1.rcgu.o:"},
+
+    "RADIO": 
+    {"size": 26,
+    "address": "0x000000000000188c",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.1.rcgu.o:"},
+
+    "_ZN13lakers_shared18EdhocMessageBuffer15fill_with_slice17hc9d7b99ede092ce6E": 
+    {"size": 24,
+    "address": "0x000000000001f5b0",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/liblakers_shared-34fd1ea19f3378c2.rlib(lakers_shared-34fd1ea19f3378c2.lakers_shared.d4ddcacfe16aaf2f-cgu.1.rcgu.o):"},
+
+    "_ZN9initiator18__cortex_m_rt_main17hbdfd34a856ecacceE": 
+    {"size": 20,
+    "address": "0x00000000000018ae",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.1.rcgu.o:"},
+
+    "_ZN45_$LT$$LP$$RP$$u20$as$u20$core..fmt..Debug$GT$3fmt17ha127858b5291851dE": 
+    {"size": 16,
+    "address": "0x00000000000015be",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.0.rcgu.o:"},
+
+    "_ZN16embassy_executor3raw4util19UninitCell$LT$T$GT$14write_in_place17h8092e5679a3c2013E": 
+    {"size": 12,
+    "address": "0x0000000000001612",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.1.rcgu.o:"},
+
+    "main": 
+    {"size": 8,
+    "address": "0x00000000000018a6",
+    "compilation_unit": "/home/elopezpe/lakers/target/thumbv7em-none-eabi/release/deps/initiator-229b05968abf22a9.initiator.2f5fb857e561286b-cgu.1.rcgu.o:"}
+}

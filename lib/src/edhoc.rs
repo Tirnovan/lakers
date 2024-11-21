@@ -242,7 +242,7 @@ pub fn r_parse_message_3(
                 );
                 //println!("plaintext_3a:{:?}", plaintext_3a);
 
-                let id_cred_psk = IdCred::from_full_value(&plaintext_3a.as_slice())?;
+                let id_cred_psk = IdCred::from_encoded_value(&plaintext_3a.as_slice())?;
 
                 let plaintext_3b =
                     decrypt_message_3(crypto, &state.prk_3e2m, &state.th_3, &ciphertext_3b)?;
@@ -650,7 +650,7 @@ pub fn i_prepare_message_3(
         let plaintext_3a = id_cred_i;
         //println!("plaintext_3a len :{:?}", plaintext_3a.bytes.len);
         // Encode plaintext_3a as CBOR
-        let pt_3a = plaintext_3a.as_full_value();
+        let pt_3a = plaintext_3a.as_encoded_value();
         //println!("plaintext_3a :{:?}", pt_3a);
         let mut ct_3a: BufferCiphertext3 = BufferCiphertext3::new();
         ct_3a.fill_with_slice(pt_3a).unwrap();
