@@ -10,12 +10,13 @@ use embassy_nrf::radio::ble::Mode;
 use embassy_nrf::radio::ble::Radio;
 use embassy_nrf::radio::TxPower;
 use embassy_nrf::{bind_interrupts, peripherals, radio};
-use embassy_time::{Duration, Timer};
+use embassy_time::{Duration, Instant, Timer};
 use {defmt_rtt as _, panic_probe as _};
 
 use lakers::*;
 
 use core::ffi::c_char;
+use core::num;
 
 extern crate alloc;
 
@@ -34,6 +35,68 @@ bind_interrupts!(struct Irqs {
     RADIO => radio::InterruptHandler<peripherals::RADIO>;
 });
 
+
+struct EnergyMetrics {
+    total_cycles: u32,
+    process_msg1_cycles: u32,
+    prepare_msg2_cycles: u32,
+    parse_msg3_cycles: u32,
+    verify_msg3_cycles: u32,
+    prepare_msg4_cycles: u32,
+    total_duration_us: u64,
+}
+
+impl EnergyMetrics {
+    fn new() -> Self {
+        Self {
+            total_cycles: 0,
+            process_msg1_cycles: 0,
+            prepare_msg2_cycles: 0,
+            parse_msg3_cycles: 0,
+            verify_msg3_cycles: 0,
+            prepare_msg4_cycles: 0,
+            total_duration_us: 0,
+        }
+    }
+
+    fn print_report(&self) {
+        info!(" === ENERGY MEASUREMENT REPORT (RESPONDER) ===");
+        info!("Total duration: {} us", self.total_duration_us);
+        info!("Total CPU cycles: {}", self.total_cycles);
+        info!("Cycles for processing message 1: {}", self.process_msg1_cycles);
+        info!("Cycles for preparing message 2: {}", self.prepare_msg2_cycles);
+        info!("Cycles for parsing message 3: {}", self.parse_msg3_cycles);
+        info!("Cycles for verifying message 3: {}", self.verify_msg3_cycles);
+        info!("Cycles for preparing message 4: {}", self.prepare_msg4_cycles);
+        info!(" ============================================= ");
+
+        let active_time_ms = self.total_duration_us / 1000;
+        let estimated_charge_mah = (active_time_ms as f32 * 5.0) / 36000.0; // Assuming 5mA current consumption
+        let estimated_energy_mwh = estimated_charge_mah * 3.3; // Assuming 3.3V supply voltage
+
+        info!("Estimated active current: 5 mA");
+        info!("Estimated energy: {} mWh", estimated_energy_mwh);
+    }
+    
+}
+
+//Read CPU cycle counter (DWT_CYCCNT register)
+#[inline(always)]
+fn get_cpu_cycles() -> u32 {
+    unsafe { 
+         // Enable DWT and CYCCNT if not already enabled
+         const DWT_CTRL: *mut u32 = 0xE0001000 as *mut u32;
+         const DWT_CYCCNT: *mut u32 = 0xE0001004 as *mut u32;
+         const SCB_DEMCR: *mut u32 = 0xE000EDFC as *mut u32;
+
+         // Enable trace
+         core::ptr::write_volatile(SCB_DEMCR, core::ptr::read_volatile(SCB_DEMCR) |  0x01000000);
+         // Enable cycle counter
+         core::ptr::write_volatile(DWT_CTRL, core::ptr::read_volatile(DWT_CTRL) | 0x00000001);
+
+         core::ptr::read_volatile(DWT_CYCCNT) 
+     }
+}
 #[embassy_executor::main]
 async fn main(spawner: Spawner) {
     let mut config = embassy_nrf::config::Config::default();
@@ -62,7 +125,17 @@ async fn main(spawner: Spawner) {
 
     info!("Responder started, will wait for messages");
 
-    loop {
+    const NUM_RUNS: usize = 10;
+    let mut all_cycles: [u32; NUM_RUNS] = [0; NUM_RUNS];
+    let mut all_durations: [u64; NUM_RUNS] = [0; NUM_RUNS];
+    let mut successful_runs: usize = 0;
+
+    info!("Will process {} EDHOC handshakes....", NUM_RUNS);
+
+    for run in 0..NUM_RUNS {
+        info!("=== Waiting for handshake {}/{} ===", run + 1, NUM_RUNS);
+
+        let mut energy_metrics = EnergyMetrics::new();
         let mut buffer: [u8; MAX_PDU] = [0x00u8; MAX_PDU];
         let mut c_r: Option<ConnId> = None;
         let pckt = common::receive_and_filter(&mut radio, Some(0xf5)) // filter all incoming packets waiting for CBOR TRUE (0xf5)
@@ -70,6 +143,10 @@ async fn main(spawner: Spawner) {
             .unwrap();
 
         info!("Received message_1");
+
+        let start_time = Instant::now();
+         
+         let start_cycles = get_cpu_cycles();
 
         let cred_r = Credential::parse_ccs(common::CRED_R.try_into().unwrap()).unwrap();
         let responder = EdhocResponder::new(
@@ -81,17 +158,23 @@ async fn main(spawner: Spawner) {
 
         let message_1: EdhocMessageBuffer = pckt.pdu[1..pckt.len].try_into().expect("wrong length"); // get rid of the TRUE byte
 
+        let cycles_before = get_cpu_cycles();
         let result = responder.process_message_1(&message_1);
+        energy_metrics.process_msg1_cycles = get_cpu_cycles().wrapping_sub(cycles_before);
 
         if let Ok((responder, _c_i, ead_1)) = result {
             c_r = Some(generate_connection_identifier_cbor(
                 &mut lakers_crypto::default_crypto(),
             ));
-            let ead_2 = None;
+            let ead_2 = EadItems::new();
+
+            let cycles_before = get_cpu_cycles();
+            
 
             let (responder, message_2) = responder
                 .prepare_message_2(CredentialTransfer::ByReference, c_r, &ead_2)
                 .unwrap();
+            energy_metrics.prepare_msg2_cycles = get_cpu_cycles().wrapping_sub(cycles_before);
 
             // prepend 0xf5 also to message_2 in order to allow the Initiator filter out from other BLE packets
             let message_3 = common::transmit_and_wait_response(
@@ -111,6 +194,7 @@ async fn main(spawner: Spawner) {
                         let message_3: EdhocMessageBuffer = message_3.pdu[1..message_3.len]
                             .try_into()
                             .expect("wrong length");
+                        let cycles_before = get_cpu_cycles();
                         let Ok((responder, id_cred_i, _ead_3)) =
                             responder.parse_message_3(&message_3)
                         else {
@@ -119,19 +203,26 @@ async fn main(spawner: Spawner) {
                             // anyway legally
                             continue;
                         };
+                        energy_metrics.parse_msg3_cycles = get_cpu_cycles().wrapping_sub(cycles_before);
+
                         let cred_i: Credential =
                             Credential::parse_ccs(common::CRED_I.try_into().unwrap()).unwrap();
                         let valid_cred_i =
                             credential_check_or_fetch(Some(cred_i), id_cred_i).unwrap();
+                        let cycles_before = get_cpu_cycles();
                         let Ok((responder, r_prk_out)) = responder.verify_message_3(valid_cred_i)
                         else {
                             info!("EDHOC error at parse_message_3");
                             continue;
                         };
+                        energy_metrics.verify_msg3_cycles = get_cpu_cycles().wrapping_sub(cycles_before);
 
                         info!("Prepare message_4");
-                        let ead_4 = None;
+                        let ead_4 = EadItems::new();
+
+                        let cycles_before = get_cpu_cycles();
                         let (responder, message_4) = responder.prepare_message_4(&ead_4).unwrap();
+                        energy_metrics.prepare_msg4_cycles = get_cpu_cycles().wrapping_sub(cycles_before);
 
                         info!("Send message_4");
                         common::transmit_without_response(
@@ -144,22 +235,87 @@ async fn main(spawner: Spawner) {
                         )
                         .await;
 
+                        // END MEASUREMENT
+                        let end_cycles = get_cpu_cycles();
+                        let end_time = Instant::now();
+
+                        energy_metrics.total_cycles = end_cycles.wrapping_sub(start_cycles);
+                        energy_metrics.total_duration_us = (end_time - start_time).as_micros();
+
                         info!("Handshake completed. prk_out = {:X}", r_prk_out);
+                        energy_metrics.print_report();
+
+                        // Store successful run results
+                        all_cycles[successful_runs] = energy_metrics.total_cycles;
+                        all_durations[successful_runs] = energy_metrics.total_duration_us;
+                        successful_runs += 1;
                     } else {
                         info!("Another packet interrupted the handshake.");
                     }
                 }
                 Err(PacketError::TimeoutError) => info!("Timeout while waiting for message_3!"),
-                Err(_) => panic!("Unexpected error"),
+                Err(_) => panic!("Unexpected error in run {}", run + 1)
             }
+        } else {
+            info!("EDHOC error at process_message_1 in run {}", run + 1);
         }
+        
     }
-}
+
+    info!("");
+    info!("===============================");
+    info!("FINAL STATISTICS OVER {} SUCCESSFUL RUNS", successful_runs);
+    info!("===============================");
+
+    if successful_runs > 0 {
+        let mut sum_cycles: u64 = 0;
+        for i in 0..successful_runs {
+            sum_cycles += all_cycles[i] as u64;
+        }
+        let average_cycles = sum_cycles / successful_runs as u64;
+
+        let mut sum_durations: u64 = 0;
+        for i in 0..successful_runs {
+            sum_durations += all_durations[i];
+        }
+        let average_duration = sum_durations / successful_runs as u64;
+
+        let mut min_cycles = all_cycles[0];
+        let mut max_cycles = all_cycles[0];
+        for i in 1..successful_runs {
+            if all_cycles[i] < min_cycles { min_cycles = all_cycles[i]; }
+            if all_cycles[i] > max_cycles { max_cycles = all_cycles[i]; }
+        }
+
+        info!("Average cycles: {}", average_cycles);
+        info!("Min cycles: {}", min_cycles);
+        info!("Max cycles: {}", max_cycles);
+        info!("Average duration: {} us", average_duration);
+        info!("Average duration: {} ms", average_duration / 1000);
+
+        //Calculate estimated energy consumption
+        let avg_time_ms = average_duration / 1000;
+        let estimated_charge_mah = (avg_time_ms as f32 * 5.0) / 36000.0; // Assuming 5mA current consumption
+        let estimated_energy_mwh = estimated_charge_mah * 3.3; // Assuming 3.3 V
+        info!("Estimated average energy: {} mWh", estimated_energy_mwh);
+    } else {
+        info!("No successful runs recorded.");
+    }
+
+    info!("===============================");
+    info!("All runs completed!");
+
+    loop {
+        Timer::after(Duration::from_secs(1)).await;
+    }
+
 
 #[embassy_executor::task]
 async fn example_application_task(secret: BytesHashLen) {
     info!(
         "Successfully spawned an application task. EDHOC prk_out: {:X}",
         secret
-    );
+    );   
+    }
+
 }
