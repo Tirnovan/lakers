@@ -166,7 +166,7 @@ async fn main(spawner: Spawner) {
             c_r = Some(generate_connection_identifier_cbor(
                 &mut lakers_crypto::default_crypto(),
             ));
-            let ead_2 = EadItems::new();
+            let ead_2 = None;
 
             let cycles_before = get_cpu_cycles();
             
@@ -218,7 +218,7 @@ async fn main(spawner: Spawner) {
                         energy_metrics.verify_msg3_cycles = get_cpu_cycles().wrapping_sub(cycles_before);
 
                         info!("Prepare message_4");
-                        let ead_4 = EadItems::new();
+                        let ead_4 = None;
 
                         let cycles_before = get_cpu_cycles();
                         let (responder, message_4) = responder.prepare_message_4(&ead_4).unwrap();

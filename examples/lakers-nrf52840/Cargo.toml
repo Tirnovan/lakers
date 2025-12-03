@@ -1,8 +1,6 @@
-cargo-features = ["edition2024"]
-
 [package]
 name = "lakers-nrf52840"
-edition = "2024"
+edition = "2021"
 version.workspace = true
 repository.workspace = true
 license.workspace = true
